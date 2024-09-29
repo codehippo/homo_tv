@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:homo_tv/osmc_controller.dart';
 
 enum TabNavigationDirection {
   previous,
@@ -7,6 +8,7 @@ enum TabNavigationDirection {
 }
 
 const double _tabHeight = 32.0;
+const int _animationDurationInMs = 100;
 
 class KeyboardNavigableTab extends StatefulWidget {
   final List<({IconData? icon, String text})> tabLabels;
@@ -41,13 +43,13 @@ class _KeyboardNavigableTabState extends State<KeyboardNavigableTab> {
   void _handleKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent) {
       switch (event.logicalKey) {
-        case LogicalKeyboardKey.arrowLeft:
+        case RemoteControl.dPadLeftKey:
           _changeTab(TabNavigationDirection.previous);
           break;
-        case LogicalKeyboardKey.arrowRight:
+        case RemoteControl.dPadRightKey:
           _changeTab(TabNavigationDirection.following);
           break;
-        case LogicalKeyboardKey.keyH:
+        case RemoteControl.homeKey:
           _goToHomeTab();
           break;
         default:
@@ -83,7 +85,7 @@ class _KeyboardNavigableTabState extends State<KeyboardNavigableTab> {
       onKeyEvent: _handleKeyEvent,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Wrap(
             spacing: 6.0,
             runAlignment: WrapAlignment.center,
@@ -107,13 +109,14 @@ class _KeyboardNavigableTabState extends State<KeyboardNavigableTab> {
       },
       child: AnimatedScale(
         scale: isSelected ? 1.125 : 1.0,
-        duration: const Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: _animationDurationInMs),
         curve: Curves.easeOutBack,
         child: SizedBox(
           height: _tabHeight,
           child: Material(
             elevation: isSelected ? 4 : 0,
-            color: isSelected ? Colors.white : Colors.transparent,
+            animationDuration: Duration(milliseconds: isSelected ? _animationDurationInMs : 0),
+            color: isSelected ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
             borderRadius: BorderRadius.circular(_tabHeight * 0.5),
             child: Padding(
               padding: widget.tabLabels[index].icon != null ? EdgeInsets.fromLTRB(12.0, 6.0, 16.0, 6.0) : EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
@@ -123,13 +126,13 @@ class _KeyboardNavigableTabState extends State<KeyboardNavigableTab> {
                 children: [
                   Icon(
                     widget.tabLabels[index].icon,
-                    color: isSelected? Colors.black87 : Colors.grey,
+                    color: isSelected ? Theme.of(context).colorScheme.onPrimaryContainer.withAlpha((0.72 * 255).round()) : Theme.of(context).colorScheme.onSurface.withAlpha((0.72 * 255).round()),
                     size: 18.0
                   ),
                   Text(
                     widget.tabLabels[index].text,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: isSelected ? Colors.black87 : Colors.white,
+                      color: isSelected ? Theme.of(context).colorScheme.onPrimaryContainer : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],

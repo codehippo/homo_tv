@@ -12,12 +12,11 @@ void main() async {
 
     // Use it only after calling `hiddenWindowAtLaunch`
     windowManager.waitUntilReadyToShow().then((_) async {
-// Hide window title bar
       await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-      await windowManager.setFullScreen(true);
       await windowManager.center();
       await windowManager.show();
       await windowManager.setSkipTaskbar(false);
+      await windowManager.setSize(Size(960.0, 540.0));
     });
   }
 
@@ -48,7 +47,10 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: const ColorScheme.dark(),
+        colorScheme: ColorScheme.fromSeed(
+           seedColor: const Color(0xffe50914),
+           brightness: Brightness.dark,
+        ),
         useMaterial3: true,
         textTheme: customTextTheme,
       ),
@@ -80,27 +82,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Column(
-      children: [
-        KeyboardNavigableTab(
-          tabLabels: [
-            (icon: Icons.search_rounded, text: 'Search'),
-            (icon: Icons.home_rounded, text: 'Home'),
-            (icon: Icons.local_movies_rounded, text: 'Library'),
-            (icon: Icons.download_rounded, text: 'Downloads')
-          ],
-          onTabChanged: (index) {
-            print('Tab changed to index $index');
-            // Handle tab change here
-          },
-        ),
-      ],
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceDim,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                child: KeyboardNavigableTab(
+                  tabLabels: [
+                    (icon: Icons.search_rounded, text: 'Search'),
+                    (icon: Icons.home_rounded, text: 'Home'),
+                    (icon: Icons.local_movies_rounded, text: 'Library'),
+                    (icon: Icons.download_rounded, text: 'Downloads')
+                  ],
+                  onTabChanged: (index) {
+                    print('Tab changed to index $index');
+                    // Handle tab change here
+                  },
+                ),
+              ),
+            ]
+          ),
+        ],
+      ),
     );
   }
 }
